@@ -35,7 +35,6 @@ static NSUInteger totalImagesLoaded = 0;
         [op release];
     }
     
-    // Override point for customization after app launch
     viewController.countLabel.text = @"Images Loaded: 0";
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
