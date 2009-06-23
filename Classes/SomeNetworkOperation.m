@@ -68,6 +68,14 @@
     [self didChangeValueForKey:@"isFinished"];
 }
 
+- (BOOL)isExecuting {
+   return _isExecuting;
+}
+
+- (BOOL)isFinished {
+   return _isFinished;
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response {
     [_responseData setLength:0];
 }
