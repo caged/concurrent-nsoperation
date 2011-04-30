@@ -43,6 +43,13 @@
         return;
     }
 
+    if ([self isCancelled]) {
+        [self willChangeValueForKey:@"isFinished"];
+        _isFinished = YES;
+        [self didChangeValueForKey:@"isFinished"];
+        return;
+    }
+
     [self willChangeValueForKey:@"isExecuting"];
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
