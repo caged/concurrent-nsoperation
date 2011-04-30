@@ -21,7 +21,7 @@
        _isExecuting = NO;
        _isFinished = NO;
    }
-   
+
    return self;
 }
 
@@ -46,21 +46,21 @@
     [self willChangeValueForKey:@"isExecuting"];
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
-    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:self.urlToLoad cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
     _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    
+
     if(_connection) {
         _responseData = [[NSMutableData alloc] init];        
     } else {
         [self finish];
-    }    
+    }
 }
 
 - (void)finish {
     [_connection release];
     _connection = nil;
-    
+
     [_responseData release];
     _responseData = nil;
 
@@ -91,23 +91,23 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
- 
+
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
           [[error userInfo] objectForKey:NSErrorFailingURLStringKey]);
-    
+
     [self finish];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
     UIImage *img = [[UIImage alloc] initWithData:_responseData];
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:img, @"img", _urlToLoad, @"url", nil];
-    
+
     if([_delegate respondsToSelector:@selector(didFinishLoad:)]) {
         [_delegate performSelector:@selector(didFinishLoad:) withObject:info];
     }
-    
     [img release];
+
     [self finish];
 }
 @end
