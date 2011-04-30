@@ -17,7 +17,7 @@
 
 - (id)init
 {
-   if(self = [super init]) {
+   if((self = [super init])) {
        _isExecuting = NO;
        _isFinished = NO;
    }
@@ -51,7 +51,7 @@
     _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
 
     if(_connection) {
-        _responseData = [[NSMutableData alloc] init];        
+        _responseData = [[[NSMutableData alloc] init] retain];
     } else {
         [self finish];
     }
@@ -100,13 +100,12 @@
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    UIImage *img = [[UIImage alloc] initWithData:_responseData];
+    UIImage *img = [[[UIImage alloc] initWithData:_responseData] autorelease];
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:img, @"img", _urlToLoad, @"url", nil];
 
     if([_delegate respondsToSelector:@selector(didFinishLoad:)]) {
         [_delegate performSelector:@selector(didFinishLoad:) withObject:info];
     }
-    [img release];
 
     [self finish];
 }

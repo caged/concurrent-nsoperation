@@ -24,15 +24,14 @@ static NSUInteger totalImagesLoaded = 0;
 
 - (void)applicationDidFinishLaunching:(UIApplication *)application {
 
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+    queue = [[[NSOperationQueue alloc] init] retain];
     [queue setMaxConcurrentOperationCount:3];
 
     for(NSURL *url in [self urlFixtures]) {
-        SomeNetworkOperation *op = [[SomeNetworkOperation alloc] init];
+        SomeNetworkOperation *op = [[[SomeNetworkOperation alloc] init] autorelease];
         op.delegate = self;
         op.urlToLoad = url;
         [queue addOperation:op];
-        [op release];
     }
 
     viewController.countLabel.text = @"Images Loaded: 0";
@@ -73,6 +72,7 @@ static NSUInteger totalImagesLoaded = 0;
 
 
 - (void)dealloc {
+    [queue release];
     [viewController release];
     [window release];
     [super dealloc];

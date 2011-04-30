@@ -14,6 +14,8 @@
 @interface ConcurrentOperationTestAppDelegate : NSObject <SomeNetworkOperationDelegate, UIApplicationDelegate> {
     UIWindow *window;
     ConcurrentOperationTestViewController *viewController;
+
+    NSOperationQueue *queue;
 }
 
 @property (nonatomic, retain) IBOutlet UIWindow *window;
