@@ -12,10 +12,10 @@
 @interface SomeNetworkOperation : NSOperation {
     id <SomeNetworkOperationDelegate>_delegate;
     NSURL *_urlToLoad;
-    
+
     NSURLConnection *_connection;
     NSMutableData   *_responseData;
-    
+
     BOOL _isFinished;
     BOOL _isExecuting;
 }
