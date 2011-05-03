@@ -22,30 +22,29 @@ static NSUInteger totalImagesLoaded = 0;
 @synthesize viewController;
 
 
-- (void)applicationDidFinishLaunching:(UIApplication *)application {   
-    
-    NSOperationQueue *queue = [[NSOperationQueue alloc] init];
+- (void)applicationDidFinishLaunching:(UIApplication *)application {
+
+    queue = [[[NSOperationQueue alloc] init] retain];
     [queue setMaxConcurrentOperationCount:3];
-    
+
     for(NSURL *url in [self urlFixtures]) {
-        SomeNetworkOperation *op = [[SomeNetworkOperation alloc] init];
+        SomeNetworkOperation *op = [[[SomeNetworkOperation alloc] init] autorelease];
         op.delegate = self;
         op.urlToLoad = url;
         [queue addOperation:op];
-        [op release];
     }
-    
+
     viewController.countLabel.text = @"Images Loaded: 0";
     [window addSubview:viewController.view];
     [window makeKeyAndVisible];
 }
 
-- (void)didFinishLoad:(NSDictionary *)info 
+- (void)didFinishLoad:(NSDictionary *)info
 {
     NSURL *url = [info valueForKey:@"url"];
     totalImagesLoaded += 1;
     viewController.countLabel.text = [NSString stringWithFormat:@"Images Loaded: %i/%i", totalImagesLoaded, [[self urlFixtures] count]];
-    
+
     NSLog(@"FINISHED LOADING URL:%@", url);
 }
 
@@ -73,6 +72,7 @@ static NSUInteger totalImagesLoaded = 0;
 
 
 - (void)dealloc {
+    [queue release];
     [viewController release];
     [window release];
     [super dealloc];

@@ -17,11 +17,11 @@
 
 - (id)init
 {
-   if(self = [super init]) {
+   if((self = [super init])) {
        _isExecuting = NO;
        _isFinished = NO;
    }
-   
+
    return self;
 }
 
@@ -37,24 +37,37 @@
 
 - (void)start
 {
+    if (![NSThread isMainThread])
+    {
+        [self performSelectorOnMainThread:@selector(start) withObject:nil waitUntilDone:NO];
+        return;
+    }
+
+    if ([self isCancelled]) {
+        [self willChangeValueForKey:@"isFinished"];
+        _isFinished = YES;
+        [self didChangeValueForKey:@"isFinished"];
+        return;
+    }
+
     [self willChangeValueForKey:@"isExecuting"];
     _isExecuting = YES;
     [self didChangeValueForKey:@"isExecuting"];
-    
+
     NSURLRequest *request = [NSURLRequest requestWithURL:self.urlToLoad cachePolicy:NSURLRequestReloadIgnoringLocalCacheData timeoutInterval:20.0];
     _connection = [[NSURLConnection alloc] initWithRequest:request delegate:self startImmediately:YES];
-    
+
     if(_connection) {
-        _responseData = [[NSMutableData alloc] init];        
+        _responseData = [[[NSMutableData alloc] init] retain];
     } else {
         [self finish];
-    }    
+    }
 }
 
 - (void)finish {
     [_connection release];
     _connection = nil;
-    
+
     [_responseData release];
     _responseData = nil;
 
@@ -85,23 +98,22 @@
 }
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error {
- 
+
     NSLog(@"Connection failed! Error - %@ %@",
           [error localizedDescription],
           [[error userInfo] objectForKey:NSErrorFailingURLStringKey]);
-    
+
     [self finish];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection {
-    UIImage *img = [[UIImage alloc] initWithData:_responseData];
+    UIImage *img = [[[UIImage alloc] initWithData:_responseData] autorelease];
     NSDictionary *info = [NSDictionary dictionaryWithObjectsAndKeys:img, @"img", _urlToLoad, @"url", nil];
-    
+
     if([_delegate respondsToSelector:@selector(didFinishLoad:)]) {
         [_delegate performSelector:@selector(didFinishLoad:) withObject:info];
     }
-    
-    [img release];
+
     [self finish];
 }
 @end
